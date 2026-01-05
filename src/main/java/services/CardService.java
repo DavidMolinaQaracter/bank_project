@@ -1,4 +1,4 @@
-package org.example;
+package services;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
