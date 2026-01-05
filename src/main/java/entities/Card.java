@@ -1,5 +1,6 @@
 package entities;
 
+import entities.enums.Status;
 import java.time.LocalDate;
 
 public abstract class Card {
