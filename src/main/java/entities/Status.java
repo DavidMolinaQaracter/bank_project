@@ -1,4 +1,4 @@
-package org.example;
+package entities;
 
 public enum Status {
     ACTIVE, CLOSED
