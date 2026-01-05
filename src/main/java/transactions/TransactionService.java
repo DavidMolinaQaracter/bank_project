@@ -1,9 +1,11 @@
 package transactions;
 import entities.enums.Result;
+import entities.enums.TransactionType;
 import exceptions.InsufficientFundsException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +42,8 @@ public class TransactionService {
 
         //Registro y alerta
         if(register) {
-            saveRecord(acc, amount, Result.SUCCESS);
+            Transaction t = new Transaction(operationCounter++, amount, LocalDateTime.now(), TransactionType.WITHDRAWN, accountId, Result.SUCCESS);
+            transactionHistory.put(operationCounter, t);
         }
 
         if (acc.getBalance().compareTo(new BigDecimal("100")) < 0) {
@@ -56,13 +59,10 @@ public class TransactionService {
 
         // Registro de la transferencia
         if(register) {
-            Transaction tx = new Transaction(operationCounter++, amount, LocalDate.now(),
-                    accountService.getAccountsMap().get(srcId), dest, Result.SUCCESS);
-            transactionHistory.put(tx.getOperationId(), tx);
+            Transaction t = new Transaction(operationCounter++, amount, LocalDateTime.now(), TransactionType.DEPOSIT, destId, Result.SUCCESS);
+            transactionHistory.put(operationCounter, t);
         }
     }
-
-
 
 
     // Metodo transferir
@@ -71,15 +71,11 @@ public class TransactionService {
             // Quitamos de una cuenta (ya registra el retiro solo)
             withdraw(srcId, amount, false);
             deposit(destId, amount, false);
+            Transaction t = new Transaction(operationCounter++, amount, LocalDateTime.now(), srcId, destId, Result.SUCCESS);
+            transactionHistory.put(operationCounter, t);
 
         } catch (Exception e) {
             throw new InvalidTransactionException("Transfer failed");
         }
-    }
-
-    // Función auxiliar para no repetir código al guardar
-    private void saveRecord(Account acc, BigDecimal amount, Result res) {
-        Transaction tx = new Transaction(operationCounter++, amount, LocalDate.now(), acc, res);
-        transactionHistory.put(tx.getOperationId(), tx);
     }
 }

@@ -20,11 +20,11 @@ public class Transaction {
 
     // CONSTRUCTORS
     // WITHDRAWAL
-    public Transaction(long operationId, BigDecimal amount, LocalDateTime date, long mainAccountID, Result result) {
+    public Transaction(long operationId, BigDecimal amount, LocalDateTime date, TransactionType transactionType, long mainAccountID, Result result) {
         this.operationId = operationId;
         this.amount = amount;
         this.date = date;
-        this.transactionType = TransactionType.WITHDRAWAL;
+        this.transactionType = transactionType;
         this.mainAccountID = mainAccountID;
         this.transferToAccountID = 0;
         this.creditAmount = 0;
