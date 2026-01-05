@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class Main {
 
     private static final Scanner scanner = new Scanner(System.in);
-
+    private static Customer customer;
     // Services (injected / created)
     private static final AuthService authService = new AuthService();
     private static final TransactionService transactionService = new TransactionService();
@@ -46,7 +46,7 @@ public class Main {
         System.out.print("Password: ");
         String password = scanner.nextLine();
         try {
-            authService.login(username, password);
+            customer = authService.login(username, password);
             showMainMenu();
         } catch (Exception e){
             System.out.println("Invalid credentials.");
@@ -97,6 +97,8 @@ public class Main {
     private static void withdraw() {
         System.out.print("Account ID: ");
         String accountId = scanner.nextLine();
+        if (!checkAccountID(accountId))
+            return;
         System.out.print("Amount: ");
         double amount = Double.parseDouble(scanner.nextLine());
         transactionService.withdraw(accountId, amount);
@@ -105,6 +107,8 @@ public class Main {
     private static void transfer() {
         System.out.print("From Account ID: ");
         String from = scanner.nextLine();
+        if (!checkAccountID(from))
+            return;
         System.out.print("To Account ID: ");
         String to = scanner.nextLine();
         System.out.print("Amount: ");
@@ -134,7 +138,23 @@ public class Main {
         } else if (option == 2) {
             System.out.print("Account ID: ");
             String id = scanner.nextLine();
+            if (!checkAccountID(id))
+                return;
             accountService.closeAccount(id);
         }
+    }
+
+    private static boolean checkAccountID(int id){
+        boolean result = false;
+        try {
+            if (accountService.checkAccountFromCustomer(customer, from)) {
+                result = true;
+            } else {
+                System.out.println("This account does not belong to the current user");
+            }
+        } catch (Exception e) {
+            System.out.println("Invalid account.");
+        }
+        return result;
     }
 }
