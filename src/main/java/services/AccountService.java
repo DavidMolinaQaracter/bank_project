@@ -1,11 +1,31 @@
+import java.util.HashMap;
+import java.util.Map;
+
 public class AccountService {
 
-    public Account createAccount(int accId, AccountType type) {
-        Account acc = new Account();
-        return null;
+    private Map<Integer, Account> accounts = new HashMap<>();
+
+    public Account createAccount(Customer c, int accId, AccountType type, Status s, Card card) {
+        if (accounts.containsKey(accId)) {
+            throw new DuplicateAccountException();
+        }
+
+        Account acc = new Account(c, accId, type, s, card);
+        accounts.put(accId, acc);
+
+        return acc;
     }
 
-    public Account deleteAccount() {
-        return null;
+
+    public Account deleteAccount(int accId) {
+        if (!accounts.containsKey(accId)) {
+            throw new AccountNotFounsException();
+        }
+
+        return accounts.remove(accId);
+    }
+
+    public Map<Integer, Account> getAllAccounts() {
+        return new HashMap<>(accounts);
     }
 }
