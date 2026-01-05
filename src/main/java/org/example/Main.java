@@ -1,11 +1,14 @@
 package org.example;
 
+import services.*;
+import entities.*;
+
 import java.util.Scanner;
 
 public class Main {
 
     private static final Scanner scanner = new Scanner(System.in);
-
+    private static Customer customer;
     // Services (injected / created)
     private static final AuthService authService = new AuthService();
     private static final TransactionService transactionService = new TransactionService();
@@ -19,16 +22,51 @@ public class Main {
 
     private static void showLoginMenu() {
         System.out.println("=== Welcome to the Bank ===");
+
+        while (true) {
+            System.out.println("1. Login");
+            System.out.println("2. Register");
+            System.out.println("3. Exit");
+
+            int option = Integer.parseInt(scanner.nextLine());
+
+            switch (option) {
+                case 1 -> login();
+                case 2 -> register();
+                case 3 -> System.exit(0);
+                default -> System.out.println("Invalid option.");
+            }
+        }
+    }
+
+    private static void login(){
         System.out.print("Username: ");
         String username = scanner.nextLine();
 
         System.out.print("Password: ");
         String password = scanner.nextLine();
         try {
-            authService.login(username, password);
+            customer = authService.login(username, password);
             showMainMenu();
         } catch (Exception e){
-                System.out.println("Invalid credentials.");
+            System.out.println("Invalid credentials.");
+        }
+    }
+
+    private static void register(){
+        System.out.print("Username: ");
+        String username = scanner.nextLine();
+        System.out.print("Name: ");
+        String name = scanner.nextLine();
+        System.out.print("Email: ");
+        String email = scanner.nextLine();
+        System.out.print("Password: ");
+        String password = scanner.nextLine();
+        try {
+            authService.register(username, name, email, password);
+            showMainMenu();
+        } catch (Exception e){
+            System.out.println("Account already exists for this username.");
         }
     }
 
@@ -59,6 +97,8 @@ public class Main {
     private static void withdraw() {
         System.out.print("Account ID: ");
         String accountId = scanner.nextLine();
+        if (!checkAccountID(accountId))
+            return;
         System.out.print("Amount: ");
         double amount = Double.parseDouble(scanner.nextLine());
         transactionService.withdraw(accountId, amount);
@@ -67,6 +107,8 @@ public class Main {
     private static void transfer() {
         System.out.print("From Account ID: ");
         String from = scanner.nextLine();
+        if (!checkAccountID(from))
+            return;
         System.out.print("To Account ID: ");
         String to = scanner.nextLine();
         System.out.print("Amount: ");
@@ -96,7 +138,23 @@ public class Main {
         } else if (option == 2) {
             System.out.print("Account ID: ");
             String id = scanner.nextLine();
+            if (!checkAccountID(id))
+                return;
             accountService.closeAccount(id);
         }
+    }
+
+    private static boolean checkAccountID(int id){
+        boolean result = false;
+        try {
+            if (accountService.checkAccountFromCustomer(customer, from)) {
+                result = true;
+            } else {
+                System.out.println("This account does not belong to the current user");
+            }
+        } catch (Exception e) {
+            System.out.println("Invalid account.");
+        }
+        return result;
     }
 }
