@@ -1,5 +1,8 @@
 package org.example;
 
+import services.*;
+import entities.*;
+
 import java.util.Scanner;
 
 public class Main {
@@ -19,6 +22,24 @@ public class Main {
 
     private static void showLoginMenu() {
         System.out.println("=== Welcome to the Bank ===");
+
+        while (true) {
+            System.out.println("1. Login");
+            System.out.println("2. Register");
+            System.out.println("3. Exit");
+
+            int option = Integer.parseInt(scanner.nextLine());
+
+            switch (option) {
+                case 1 -> login();
+                case 2 -> register();
+                case 3 -> System.exit(0);
+                default -> System.out.println("Invalid option.");
+            }
+        }
+    }
+
+    private static void login(){
         System.out.print("Username: ");
         String username = scanner.nextLine();
 
@@ -28,7 +49,24 @@ public class Main {
             authService.login(username, password);
             showMainMenu();
         } catch (Exception e){
-                System.out.println("Invalid credentials.");
+            System.out.println("Invalid credentials.");
+        }
+    }
+
+    private static void register(){
+        System.out.print("Username: ");
+        String username = scanner.nextLine();
+        System.out.print("Name: ");
+        String name = scanner.nextLine();
+        System.out.print("Email: ");
+        String email = scanner.nextLine();
+        System.out.print("Password: ");
+        String password = scanner.nextLine();
+        try {
+            authService.register(username, name, email, password);
+            showMainMenu();
+        } catch (Exception e){
+            System.out.println("Account already exists for this username.");
         }
     }
 
