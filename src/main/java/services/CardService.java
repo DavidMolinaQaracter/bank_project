@@ -3,8 +3,9 @@ package services;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import entities.Card;
-import entities.Status;
+import entities.enums.Status;
 import entities.CreditCard;
+import exceptions.CardBlockedException;
 
 public class CardService {
     HashMap<String, Card> cards;
@@ -28,8 +29,7 @@ public class CardService {
         return true;
     }
 
-    // TODO: Will throw CardBlockedException
-    public void blockCard(String cardNum) {
+    public void blockCard(String cardNum) throws CardBlockedException {
         // Cards list is empty or invalid card number
         if (cards.isEmpty() || cardNum == null) {
             return;
@@ -40,6 +40,10 @@ public class CardService {
         // Card with the requested card number is not in the cards hashmap.
         if (card == null) {
             return;
+        }
+
+        if (card.getIsBlocked() == Status.CLOSED) {
+            throw new CardBlockedException();
         }
 
         card.setIsBlocked(Status.CLOSED);
