@@ -49,7 +49,7 @@ public class Account {
     }
 
     public Map<String, Card> getCards() {
-        return cards;
+        return new HashMap<>(this.cards);
     }
 
     public int getAccountId() {
