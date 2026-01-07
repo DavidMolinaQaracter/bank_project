@@ -199,7 +199,6 @@ public class Main {
                             }
                             break;
                         case 2:
-                            String nLimit = scanner.nextLine();
                             BigDecimal bg = scanner.nextBigDecimal();
 
                             if (cardService.updateLimit(card.getCardNumber(), bg)) {
