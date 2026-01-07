@@ -1,11 +1,15 @@
 package org.example;
 
+import entities.enums.AccountType;
+import entities.enums.Status;
 import exceptions.*;
 import services.*;
 import entities.*;
 
 import java.math.BigDecimal;
 import java.util.Scanner;
+
+import static entities.enums.Status.ACTIVE;
 
 public class Main {
 
@@ -118,16 +122,19 @@ public class Main {
         if (!checkAccountID(from))
             return;
         System.out.print("To Account ID: ");
-        String to = scanner.nextLine();
+        Long to = Long.parseLong(scanner.nextLine());
         System.out.print("Amount: ");
-        double amount = Double.parseDouble(scanner.nextLine());
-        transactionService.transfer(from, to, amount);
+        BigDecimal amount = BigDecimal.valueOf(Long.parseLong(scanner.nextLine()));
+        try {
+            transactionService.transfer(from, to, amount);
+        } catch (InvalidTransactionException e){
+            System.out.println("Invalid transaction, operation cancelled");
+        }
     }
 
     private static void manageCard() {
         System.out.print("Card number: ");
         String cardNumber = scanner.nextLine();
-        cardService.blockCard(cardNumber);
     }
 
     private static void manageAccount() {
@@ -136,8 +143,24 @@ public class Main {
         int option = Integer.parseInt(scanner.nextLine());
 
         if (option == 1) {
-            Account account = accountService.createAccount();
-            System.out.println("Created account with ID " + account.getAccountId());
+            try{
+
+                System.out.println("Enter account number: ");
+                int id = Integer.parseInt(scanner.nextLine());
+                System.out.println("Enter account type (default: savings)");
+                System.out.println(" 1: Savings");
+                System.out.println(" 2: Current");
+                int type = Integer.parseInt(scanner.nextLine());
+                AccountType accountType;
+                switch (type) {
+                    case 1 -> accountType = AccountType.SAVINGS;
+                    case 2 -> accountType = AccountType.CURRENT;
+                    default -> accountType = AccountType.SAVINGS;
+                }
+                Account account = accountService.createAccount(customer, id, accountType, Status.ACTIVE, null);
+            } catch (DuplicateAccountException e){
+                System.out.println("Duplicate account, operation cancelled");
+            }
         } else if (option == 2) {
             System.out.print("Account ID: ");
             long id = Long.parseLong(scanner.nextLine());
