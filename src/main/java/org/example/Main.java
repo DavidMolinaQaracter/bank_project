@@ -85,21 +85,23 @@ public class Main {
         while (true) {
             System.out.println("\n=== MAIN MENU ===");
             System.out.println("1. Withdraw money");
-            System.out.println("2. Transfer money");
-            System.out.println("3. Block / Manage card");
-            System.out.println("4. Update personal information");
-            System.out.println("5. Create / Close account");
-            System.out.println("6. Exit");
+            System.out.println("2. Deposit money");
+            System.out.println("3. Transfer money");
+            System.out.println("4. Block / Manage card");
+            System.out.println("5. Update personal information");
+            System.out.println("6. Create / Close account");
+            System.out.println("7. Exit");
 
             int option = Integer.parseInt(scanner.nextLine());
 
             switch (option) {
                 case 1 -> withdraw();
-                case 2 -> transfer();
-                case 3 -> manageCard();
-                case 4 -> customerService.updateCustomerInfo(customer);
-                case 5 -> manageAccount();
-                case 6 -> showLoginMenu();
+                case 2 -> deposit();
+                case 3 -> transfer();
+                case 4 -> manageCard();
+                case 5 -> customerService.updateCustomerInfo(customer);
+                case 6 -> manageAccount();
+                case 7 -> showLoginMenu();
                 default -> System.out.println("Invalid option.");
             }
         }
@@ -114,6 +116,20 @@ public class Main {
         BigDecimal amount = BigDecimal.valueOf(Long.parseLong(scanner.nextLine()));
         try {
             transactionService.withdraw(accountId, amount, true);
+        } catch (InsufficientFundsException e){
+            System.out.println("Insufficient funds, operation cancelled");
+        }
+    }
+
+    private static void deposit() {
+        System.out.print("Account ID: ");
+        Long accountId = Long.parseLong(scanner.nextLine());
+        if (!checkAccountID(accountId))
+            return;
+        System.out.print("Amount: ");
+        BigDecimal amount = BigDecimal.valueOf(Long.parseLong(scanner.nextLine()));
+        try {
+            transactionService.deposit(accountId, amount, true);
         } catch (InsufficientFundsException e){
             System.out.println("Insufficient funds, operation cancelled");
         }
