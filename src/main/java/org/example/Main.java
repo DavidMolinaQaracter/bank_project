@@ -118,17 +118,16 @@ public class Main {
         if (!checkAccountID(from))
             return;
         System.out.print("To Account ID: ");
-        String to = scanner.nextLine();
+        Long to = Long.parseLong(scanner.nextLine());
         System.out.print("Amount: ");
-        double amount = Double.parseDouble(scanner.nextLine());
-        transactionService.transfer(from, to, amount);
+        BigDecimal amount = BigDecimal.valueOf(Long.parseLong(scanner.nextLine()));
+        try {
+            transactionService.transfer(from, to, amount);
+        } catch (InvalidTransactionException e){
+            System.out.println("Invalid transaction, operation cancelled");
+        }
     }
-
-    private static void manageCard() {
-        System.out.print("Card number: ");
-        String cardNumber = scanner.nextLine();
-        cardService.blockCard(cardNumber);
-    }
+    
 
     private static void manageAccount() {
         System.out.println("1. Create account");
