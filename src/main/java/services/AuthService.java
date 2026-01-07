@@ -16,7 +16,7 @@ public class AuthService {
         Customer result = null;
         if (customers.containsKey(username)) {
             Customer customer = customers.get(username);
-            if (customer.getPassword().equals(password.hashCode())) {
+            if (Integer.parseInt(customer.getPassword()) == password.hashCode()) {
                 result = customer;
             }
         }
