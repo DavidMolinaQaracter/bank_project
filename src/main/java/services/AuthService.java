@@ -9,7 +9,7 @@ import exceptions.DuplicateAccountException;
 
 public class AuthService {
     //<username, User(Customer + Password)>
-    private HashMap<String, Customer> customers;
+    private HashMap<String, Customer> customers =  new HashMap<>();
 
     //
     public Customer login(String username, String password) throws AuthenticationFailedException {
