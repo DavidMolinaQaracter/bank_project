@@ -1,6 +1,8 @@
 package services;
 
-import entities.Customer;
+import entities.*;
+import exceptions.*;
+import services.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,21 +16,22 @@ public class AuthService {
         Customer result = null;
         if (customers.containsKey(username)) {
             Customer customer = customers.get(username);
-            if (customer.getPassword().equals(password.hashCode())) {
+            if (customer.getPassword().equals(password)) {
                 result = customer;
             }
         }
         if (result == null) {
-            throw new AuthenticationFailedException("Incorrect username or password");
+            throw new AuthenticationFailedException();
         }
         return result;
     }
 
-    public Customer register(String username, String name, String email, String password)  {
+    public Customer register(String firstName, String lastName, String username, String email, String password)
+            throws DuplicateAccountException {
         if (customers.containsKey(username)) {
-            throw new DuplicateAccountException("Account already exists for the username");
+            throw new DuplicateAccountException();
         }
-        Customer customer = new Customer(name, email, password.hashCode());
+        Customer customer = new Customer(firstName, lastName, email, password);
         customers.put(username, customer);
         return customer;
     }
